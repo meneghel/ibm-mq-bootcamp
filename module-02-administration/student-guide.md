@@ -382,46 +382,444 @@ The Queue Manager is the foundation of every IBM MQ environment and one of the m
 
 ## What Is MQSC?
 
-MQSC (MQ Script Commands) is the primary administrative language used to configure IBM MQ environments.
+MQSC (MQ Script Commands) is the primary administrative language used to configure, manage and monitor IBM MQ environments.
 
-MQSC provides a command-based interface for:
+MQSC is the command-line interface used by administrators to perform almost every operational activity within IBM MQ.
 
-* Creating Objects
-* Modifying Objects
-* Displaying Configuration
-* Monitoring Resources
+Using MQSC, administrators can:
+
+* Create Objects
+* Modify Objects
+* Delete Objects
+* Monitor Resources
+* Configure Communication Components
+* Start and Stop Services
+* Troubleshoot Operational Issues
+
+MQSC remains one of the most important skills for IBM MQ administrators.
+
+---
+
+## Why MQSC Matters
+
+Even when graphical tools are available, most enterprise environments rely heavily on MQSC.
+
+Reasons include:
+
+* Automation
+* Scripting
+* Configuration Management
+* Infrastructure as Code
+* Disaster Recovery
+* Change Control
+
+MQSC scripts are commonly stored in version control repositories and used as part of deployment pipelines.
 
 ---
 
 ## Starting MQSC
 
-```bash
+Interactive mode:
+
+```bash id="rt3m55"
 runmqsc QM1
 ```
 
----
+Example:
 
-## Display Queue Manager Information
+```text id="ykh92w"
+5724-H72 (C) Copyright IBM Corp.
+Starting MQSC for Queue Manager QM1
+```
 
-```mqsc
-DISPLAY QMGR
+Exit MQSC:
+
+```mqsc id="v0rj2y"
+END
 ```
 
 ---
 
-## Display Queues
+## MQSC Command Structure
 
-```mqsc
+Most commands follow a simple pattern:
+
+```mqsc id="g8yhlf"
+VERB OBJECT ATTRIBUTES
+```
+
+Examples:
+
+```mqsc id="jw3s4d"
+DISPLAY QMGR
+DEFINE QLOCAL(APP.INPUT)
+ALTER QLOCAL(APP.INPUT)
+DELETE QLOCAL(APP.INPUT)
+```
+
+Common verbs:
+
+* DISPLAY
+* DEFINE
+* ALTER
+* DELETE
+* START
+* STOP
+* RESET
+
+---
+
+## DISPLAY Commands
+
+DISPLAY commands are used to retrieve information.
+
+Example:
+
+```mqsc id="szshl4"
+DISPLAY QMGR
+```
+
+Displays Queue Manager attributes.
+
+---
+
+Display all Local Queues:
+
+```mqsc id="m7yn8m"
 DISPLAY QLOCAL(*)
 ```
 
 ---
 
-## Display Channels
+Display all Channels:
 
-```mqsc
+```mqsc id="z2hdyu"
 DISPLAY CHANNEL(*)
 ```
+
+---
+
+Display Queue Status:
+
+```mqsc id="s7fx7k"
+DISPLAY QSTATUS(APP.INPUT)
+```
+
+DISPLAY commands are among the most frequently used commands in production environments.
+
+---
+
+## DEFINE Commands
+
+DEFINE commands create new objects.
+
+Example:
+
+```mqsc id="0t0uyn"
+DEFINE QLOCAL(APP.INPUT)
+```
+
+Create a Remote Queue:
+
+```mqsc id="rw7l6m"
+DEFINE QREMOTE(APP.REMOTE)
+```
+
+Create a Channel:
+
+```mqsc id="gjv31o"
+DEFINE CHANNEL(QM1.TO.QM2)
+CHLTYPE(SDR)
+TRPTYPE(TCP)
+```
+
+---
+
+## ALTER Commands
+
+ALTER commands modify existing objects.
+
+Example:
+
+```mqsc id="x9s0yd"
+ALTER QLOCAL(APP.INPUT)
+MAXDEPTH(10000)
+```
+
+Example:
+
+```mqsc id="fhhb6j"
+ALTER CHANNEL(QM1.TO.QM2)
+HBINT(300)
+```
+
+Administrators frequently use ALTER commands to adjust operational parameters.
+
+---
+
+## DELETE Commands
+
+DELETE commands remove objects.
+
+Example:
+
+```mqsc id="f6xg5m"
+DELETE QLOCAL(APP.INPUT)
+```
+
+Important:
+
+Objects should only be deleted after impact analysis and approval procedures.
+
+---
+
+## START Commands
+
+Used to start resources.
+
+Examples:
+
+```mqsc id="y8ozm5"
+START CHANNEL(QM1.TO.QM2)
+```
+
+```mqsc id="dkmn7j"
+START LISTENER(LISTENER.TCP)
+```
+
+---
+
+## STOP Commands
+
+Used to stop resources.
+
+Examples:
+
+```mqsc id="1z79hq"
+STOP CHANNEL(QM1.TO.QM2)
+```
+
+```mqsc id="m3t6in"
+STOP LISTENER(LISTENER.TCP)
+```
+
+---
+
+## RESET Commands
+
+RESET commands recover or reset operational resources.
+
+Example:
+
+```mqsc id="f8b7mz"
+RESET CHANNEL(QM1.TO.QM2)
+```
+
+RESET commands should be used carefully because they may impact message delivery.
+
+---
+
+## MQSC Batch Mode
+
+MQSC commands can be executed from files.
+
+Example:
+
+Create file:
+
+```text id="rr6v2x"
+create-queues.mqsc
+```
+
+Content:
+
+```mqsc id="mkgj6p"
+DEFINE QLOCAL(APP.INPUT)
+DEFINE QLOCAL(APP.OUTPUT)
+```
+
+Execute:
+
+```bash id="xv0x33"
+runmqsc QM1 < create-queues.mqsc
+```
+
+Benefits:
+
+* Automation
+* Repeatability
+* Version Control
+
+---
+
+## Command Server
+
+Many MQSC operations are processed through the Command Server.
+
+The Command Server receives administrative requests and executes them against the Queue Manager.
+
+Important queue:
+
+```text id="f0oxmw"
+SYSTEM.ADMIN.COMMAND.QUEUE
+```
+
+Administrators should verify the Command Server is running.
+
+Display status:
+
+```bash id="pqhs8w"
+dspmqcsv QM1
+```
+
+---
+
+## Exporting Configuration
+
+Configuration export is essential for backup and recovery.
+
+Common tools:
+
+### saveqmgr
+
+Exports MQ object definitions.
+
+Example:
+
+```bash id="j2gn5w"
+saveqmgr -m QM1
+```
+
+---
+
+### dmpmqcfg
+
+Exports MQ configuration in MQSC format.
+
+Example:
+
+```bash id="lmbf39"
+dmpmqcfg -m QM1
+```
+
+Benefits:
+
+* Backup
+* Migration
+* Disaster Recovery
+
+---
+
+## Common MQSC Errors
+
+### Object Already Exists
+
+Example:
+
+```text id="1txmkh"
+AMQ8146
+```
+
+Cause:
+
+Attempting to create an existing object.
+
+---
+
+### Unknown Object
+
+Example:
+
+```text id="fjlwmr"
+2085 MQRC_UNKNOWN_OBJECT_NAME
+```
+
+Cause:
+
+Object name incorrect.
+
+---
+
+### Not Authorized
+
+Example:
+
+```text id="5s0vha"
+2035 MQRC_NOT_AUTHORIZED
+```
+
+Cause:
+
+Insufficient permissions.
+
+---
+
+## MQSC Best Practices
+
+### Use Scripts
+
+Avoid manual configuration whenever possible.
+
+---
+
+### Version Control
+
+Store MQSC scripts in Git repositories.
+
+---
+
+### Use Naming Standards
+
+Maintain consistency across environments.
+
+---
+
+### Test Before Production
+
+Always validate MQSC scripts in lower environments.
+
+---
+
+### Document Changes
+
+Maintain operational change history.
+
+---
+
+## Administrative Checklist
+
+Daily MQSC activities often include:
+
+* DISPLAY QMGR
+* DISPLAY QSTATUS
+* DISPLAY CHSTATUS
+* START CHANNEL
+* STOP CHANNEL
+* ALTER QLOCAL
+* Review Error Logs
+
+MQSC is the primary interface used by administrators to operate IBM MQ environments.
+
+---
+
+## Chapter Summary
+
+You learned:
+
+* MQSC Fundamentals
+* Command Structure
+* DISPLAY Commands
+* DEFINE Commands
+* ALTER Commands
+* DELETE Commands
+* START and STOP Commands
+* RESET Commands
+* Batch Execution
+* Command Server
+* Configuration Export
+* Administrative Best Practices
+
+MQSC is one of the most important skills for IBM MQ administrators and serves as the foundation for automation, operations and infrastructure management.
 
 ---
 
