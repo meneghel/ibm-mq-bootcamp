@@ -427,9 +427,35 @@ DISPLAY CHANNEL(*)
 
 # Chapter 04 - Queue Administration
 
-## Local Queues
+## Introduction
 
-Used to store messages locally.
+Queues are the fundamental storage mechanism of IBM MQ.
+
+Every message processed by IBM MQ passes through one or more queues.
+
+Because of this, queue administration is one of the most important responsibilities of an IBM MQ Administrator.
+
+A poorly configured queue can lead to:
+
+* Message Loss
+* Processing Delays
+* Capacity Issues
+* Application Failures
+* Performance Problems
+
+Administrators must understand not only queue types but also operational attributes, monitoring techniques and capacity management practices.
+
+---
+
+## Queue Types
+
+IBM MQ provides several queue types designed for different purposes.
+
+---
+
+### Local Queue
+
+A Local Queue stores messages managed by the local Queue Manager.
 
 Example:
 
@@ -437,33 +463,87 @@ Example:
 DEFINE QLOCAL(APP.INPUT)
 ```
 
+Typical use cases:
+
+* Application Input
+* Application Output
+* Request Queues
+* Reply Queues
+
 ---
 
-## Remote Queues
+### Remote Queue
 
-Represent destinations hosted by another Queue Manager.
+A Remote Queue represents a queue located on another Queue Manager.
 
 Example:
 
 ```mqsc
-DEFINE QREMOTE(APP.REMOTE)
+DEFINE QREMOTE(ORDERS.REMOTE)
+RNAME(ORDERS.INPUT)
+RQMNAME(QM2)
+XMITQ(QM2.XMITQ)
 ```
+
+Benefits:
+
+* Location transparency
+* Simplified application design
 
 ---
 
-## Alias Queues
+### Alias Queue
 
-Provide alternate names for existing queues.
+Provides an alternative name for another queue.
 
 Example:
 
 ```mqsc
-DEFINE QALIAS(APP.ALIAS)
+DEFINE QALIAS(ORDERS)
+TARGET(ORDERS.INPUT)
 ```
+
+Benefits:
+
+* Decoupling
+* Easier application migration
+* Administrative flexibility
 
 ---
 
-## Dead Letter Queue
+### Model Queue
+
+Used as a template for dynamically created queues.
+
+Example:
+
+```mqsc
+DEFINE QMODEL(APP.MODEL)
+```
+
+Commonly used in:
+
+* Request/Reply Patterns
+* Dynamic Reply Queues
+
+---
+
+### Transmission Queue
+
+Stores messages waiting to be transmitted to another Queue Manager.
+
+Example:
+
+```mqsc
+DEFINE QLOCAL(QM2.XMITQ)
+USAGE(XMITQ)
+```
+
+Transmission Queues are critical for distributed messaging environments.
+
+---
+
+### Dead Letter Queue
 
 Stores messages that cannot be delivered.
 
@@ -472,6 +552,323 @@ Example:
 ```mqsc
 ALTER QMGR DEADQ(SYSTEM.DEAD.LETTER.QUEUE)
 ```
+
+Common reasons messages arrive in the DLQ:
+
+* Destination Queue Missing
+* Queue Full
+* Authorization Failure
+* Routing Problems
+
+---
+
+## Queue Attributes
+
+Queue attributes control behavior and performance.
+
+Administrators should understand the most important attributes.
+
+---
+
+### MAXDEPTH
+
+Maximum number of messages allowed.
+
+Example:
+
+```mqsc
+DISPLAY QLOCAL(APP.INPUT) MAXDEPTH
+```
+
+Typical values:
+
+```text
+5000
+10000
+50000
+```
+
+---
+
+### MAXMSGL
+
+Maximum message size.
+
+Example:
+
+```mqsc
+DISPLAY QLOCAL(APP.INPUT) MAXMSGL
+```
+
+Large message limits may impact performance and storage consumption.
+
+---
+
+### DEFPSIST
+
+Default persistence behavior.
+
+Values:
+
+```text
+YES
+NO
+```
+
+Persistent messages survive Queue Manager failures.
+
+---
+
+### PUT
+
+Controls whether applications can place messages.
+
+Example:
+
+```text
+PUT(ENABLED)
+PUT(DISABLED)
+```
+
+---
+
+### GET
+
+Controls whether applications can retrieve messages.
+
+Example:
+
+```text
+GET(ENABLED)
+GET(DISABLED)
+```
+
+---
+
+### BOTHRESH
+
+Backout Threshold.
+
+Defines how many processing failures may occur before a message is redirected.
+
+Commonly used with:
+
+```text
+Backout Queue
+Poison Message Handling
+```
+
+---
+
+## Queue Monitoring
+
+Monitoring queues is a daily administrative activity.
+
+---
+
+### Current Queue Depth
+
+Displays current message count.
+
+```mqsc
+DISPLAY QSTATUS(APP.INPUT) CURDEPTH
+```
+
+Example:
+
+```text
+CURDEPTH(150)
+```
+
+---
+
+### Open Input Processes
+
+Displays active consumers.
+
+```mqsc
+DISPLAY QSTATUS(APP.INPUT) IPPROCS
+```
+
+---
+
+### Open Output Processes
+
+Displays active producers.
+
+```mqsc
+DISPLAY QSTATUS(APP.INPUT) OPPROCS
+```
+
+---
+
+### Last Put Date
+
+Displays last message arrival.
+
+```mqsc
+DISPLAY QSTATUS(APP.INPUT) LPUTDATE
+```
+
+Useful for detecting inactive applications.
+
+---
+
+### Last Get Date
+
+Displays last message consumption.
+
+```mqsc
+DISPLAY QSTATUS(APP.INPUT) LGETDATE
+```
+
+Useful for identifying processing delays.
+
+---
+
+## Queue Capacity Management
+
+Administrators should proactively monitor queue growth.
+
+Indicators include:
+
+* Increasing Queue Depth
+* Queue Full Conditions
+* Slow Consumers
+* Application Outages
+
+---
+
+### Queue Full Scenario
+
+Common error:
+
+```text
+2053 MQRC_Q_FULL
+```
+
+Possible causes:
+
+* Consumer Down
+* High Message Volume
+* Small MAXDEPTH Value
+
+---
+
+### Slow Consumer Scenario
+
+Symptoms:
+
+```text
+CURDEPTH Increasing
+IPPROCS Low
+OPPROCS High
+```
+
+Messages accumulate faster than they are consumed.
+
+---
+
+## Poison Messages
+
+A poison message repeatedly causes application failures.
+
+Example:
+
+```text
+Process Message
+Fail
+Rollback
+
+Process Message
+Fail
+Rollback
+```
+
+Without proper handling, the message remains in the queue indefinitely.
+
+Best practice:
+
+* Configure BOTHRESH
+* Configure Backout Queue
+* Monitor repeated failures
+
+---
+
+## Queue Administration Best Practices
+
+### Use Naming Standards
+
+Examples:
+
+```text
+APP.INPUT
+APP.OUTPUT
+APP.ERROR
+APP.REPLY
+```
+
+---
+
+### Monitor Queue Depth
+
+Queue depth growth is often the earliest indicator of a problem.
+
+---
+
+### Configure Dead Letter Queues
+
+Every Queue Manager should have a properly configured DLQ.
+
+---
+
+### Review Queue Utilization
+
+Monitor:
+
+* Message Volume
+* Growth Trends
+* Peak Utilization
+
+---
+
+### Document Queue Purpose
+
+Maintain documentation describing:
+
+* Queue Owner
+* Application
+* Message Type
+* Retention Requirements
+
+---
+
+## Operational Checklist
+
+Daily queue administration activities:
+
+* Review CURDEPTH
+* Review DLQ Activity
+* Review Queue Full Events
+* Verify Consumer Activity
+* Verify Producer Activity
+* Review Error Logs
+
+---
+
+## Chapter Summary
+
+You learned:
+
+* Queue Types
+* Queue Attributes
+* Queue Monitoring
+* Capacity Management
+* Queue Full Conditions
+* Poison Messages
+* Administrative Best Practices
+
+Queue administration is one of the most important operational responsibilities within IBM MQ environments and directly impacts reliability, performance and business continuity.
 
 ---
 
