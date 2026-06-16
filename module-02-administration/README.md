@@ -18,11 +18,11 @@ The content is designed for administrators, middleware engineers, support teams 
 
 ## Status
 
-🟢 Student Guide v2.0 COMPLETE
+✅ COMPLETE
 
 Current Release:
 
-**v1.1.0**
+**v1.2.0**
 
 ---
 
@@ -100,11 +100,11 @@ Review of key concepts and preparation for subsequent modules.
 | Artifact      | Status     |
 | ------------- | ---------- |
 | Student Guide | ✅ Complete |
-| Exercises     | ⏳ Planned  |
-| Assessment    | ⏳ Planned  |
-| Diagrams      | ⏳ Planned  |
-| Presentation  | ⏳ Planned  |
-| Labs          | ⏳ Planned  |
+| Exercises     | ✅ Complete |
+| Assessment    | ✅ Complete |
+| Diagrams      | ✅ Complete |
+| Presentation  | ✅ Complete |
+| Labs          | ✅ Complete |
 
 ---
 
