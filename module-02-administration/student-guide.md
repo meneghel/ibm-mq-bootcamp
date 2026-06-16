@@ -2076,44 +2076,285 @@ DEFINE SERVICE(MY.SERVICE)
 
 # Chapter 08 - Monitoring Fundamentals
 
-## Why Monitoring Matters
+## Introduction
 
-Monitoring helps prevent outages and capacity issues.
+Monitoring is one of the most important responsibilities of an IBM MQ Administrator.
 
-Common monitoring activities include:
+Most production incidents provide warning signs before impacting business operations.
 
-* Queue Depth Analysis
-* Channel Status Monitoring
-* Queue Manager Availability
-* Error Log Review
+Effective monitoring helps identify:
+
+* Capacity Issues
+* Application Failures
+* Channel Problems
+* Performance Bottlenecks
+* Infrastructure Outages
 
 ---
 
-## Queue Depth
+## Monitoring Objectives
 
-Display Queue Status:
+Administrators should continuously monitor:
+
+* Queue Managers
+* Queues
+* Channels
+* Listeners
+* Error Logs
+* System Resources
+
+---
+
+## Queue Manager Monitoring
+
+Display Queue Manager Status:
+
+```mqsc
+DISPLAY QMSTATUS
+```
+
+Useful information:
+
+* Status
+* Log Utilization
+* Connection Counts
+
+---
+
+## Queue Monitoring
+
+### Current Depth
+
+```mqsc
+DISPLAY QSTATUS(APP.INPUT) CURDEPTH
+```
+
+Example:
+
+```text
+CURDEPTH(150)
+```
+
+---
+
+### Input Processes
+
+```mqsc
+DISPLAY QSTATUS(APP.INPUT) IPPROCS
+```
+
+---
+
+### Output Processes
+
+```mqsc
+DISPLAY QSTATUS(APP.INPUT) OPPROCS
+```
+
+---
+
+### Last Message Activity
 
 ```mqsc
 DISPLAY QSTATUS(APP.INPUT)
 ```
 
+Monitor:
+
+* LPUTDATE
+* LPUTTIME
+* LGETDATE
+* LGETTIME
+
 ---
 
-## Channel Status
+## Queue Depth Monitoring
+
+Queue depth is one of the most important operational indicators.
+
+Warning signs:
+
+```text
+CURDEPTH Increasing
+Consumers Not Processing
+Messages Accumulating
+```
+
+Common causes:
+
+* Application Failure
+* Slow Consumer
+* Infrastructure Issues
+
+---
+
+## Channel Monitoring
+
+Display Channel Status:
 
 ```mqsc
 DISPLAY CHSTATUS(*)
 ```
 
+Monitor:
+
+* RUNNING
+* RETRYING
+* STOPPED
+
+---
+
+## Listener Monitoring
+
+Display:
+
+```mqsc
+DISPLAY LSSTATUS(*)
+```
+
+Verify:
+
+* Running State
+* Listening Port
+* Availability
+
 ---
 
 ## Error Logs
 
-Common log location:
+Default location:
 
 ```text
 /var/mqm/errors
 ```
+
+Important files:
+
+```text
+AMQERR01.LOG
+AMQERR02.LOG
+AMQERR03.LOG
+```
+
+---
+
+## FDC Files
+
+FDC stands for:
+
+```text
+First Failure Data Capture
+```
+
+Generated when IBM MQ detects unexpected internal conditions.
+
+Location:
+
+```text
+/var/mqm/errors
+```
+
+FDC files are commonly requested by IBM Support.
+
+---
+
+## Capacity Planning
+
+Administrators should monitor:
+
+* Queue Growth
+* Message Volume
+* Log Utilization
+* Channel Activity
+
+Questions:
+
+* Is workload increasing?
+* Is infrastructure sufficient?
+* Are queue depths growing?
+
+---
+
+## Monitoring Thresholds
+
+Example:
+
+```text
+Queue Depth > 80%
+Alert
+
+Queue Depth > 90%
+Critical
+```
+
+Example:
+
+```text
+Channel RETRYING
+Alert
+```
+
+---
+
+## Common Monitoring Tools
+
+Examples:
+
+* IBM MQ Explorer
+* IBM Instana
+* IBM Tivoli Monitoring
+* Prometheus
+* Grafana
+* Splunk
+
+---
+
+## Monitoring Best Practices
+
+### Monitor Proactively
+
+Do not wait for users to report issues.
+
+---
+
+### Define Thresholds
+
+Create actionable alerts.
+
+---
+
+### Review Trends
+
+Focus on growth patterns.
+
+---
+
+### Monitor Logs
+
+Review errors regularly.
+
+---
+
+### Automate Monitoring
+
+Integrate MQ with enterprise monitoring platforms.
+
+---
+
+## Chapter Summary
+
+You learned:
+
+* Queue Manager Monitoring
+* Queue Monitoring
+* Channel Monitoring
+* Listener Monitoring
+* Error Logs
+* FDC Files
+* Capacity Planning
+* Monitoring Best Practices
+
+Monitoring is one of the most valuable operational disciplines within IBM MQ administration and often determines how quickly incidents can be identified and resolved.
 
 ---
 
