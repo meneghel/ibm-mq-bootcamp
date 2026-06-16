@@ -1718,15 +1718,62 @@ Channel administration is one of the most critical responsibilities of an IBM MQ
 
 # Chapter 06 - Listener Administration
 
-## What Is a Listener?
+## Introduction
 
-Listeners accept inbound TCP/IP connections for IBM MQ.
+Listeners are responsible for accepting inbound TCP/IP connections for IBM MQ.
 
-They enable channels and clients to establish network communications.
+Without a Listener, remote Queue Managers and client applications cannot establish network communications with IBM MQ.
+
+Listeners are fundamental components in distributed MQ environments and play a critical role in connectivity, availability and troubleshooting.
 
 ---
 
-## Create a Listener
+## What Is a Listener?
+
+A Listener is a process that waits for inbound network connections.
+
+When a remote Queue Manager or client application attempts to connect, the Listener accepts the connection and transfers control to the appropriate channel process.
+
+Typical communication flow:
+
+```text
+Application
+     |
+TCP/IP Connection
+     |
+ Listener
+     |
+ Channel
+     |
+ Queue Manager
+```
+
+---
+
+## Listener Architecture
+
+A typical MQ Listener operates on a TCP port.
+
+Example:
+
+```text
+Queue Manager: QM1
+Listener: LISTENER.TCP
+Port: 1414
+Protocol: TCP/IP
+```
+
+When a remote connection arrives:
+
+1. Listener accepts the request
+2. Channel process is created
+3. Queue Manager processes communication
+
+---
+
+## Creating a Listener
+
+Example:
 
 ```mqsc
 DEFINE LISTENER(LISTENER.TCP)
@@ -1735,21 +1782,273 @@ PORT(1414)
 CONTROL(QMGR)
 ```
 
+Attributes:
+
+### TRPTYPE
+
+Transport protocol.
+
+Example:
+
+```text
+TCP
+```
+
 ---
 
-## Start Listener
+### PORT
+
+Network port used by MQ.
+
+Example:
+
+```text
+1414
+```
+
+Port 1414 is the default IBM MQ port.
+
+---
+
+### CONTROL
+
+Defines startup behavior.
+
+Values:
+
+```text
+QMGR
+MANUAL
+```
+
+Recommended:
+
+```text
+CONTROL(QMGR)
+```
+
+Automatically starts when the Queue Manager starts.
+
+---
+
+## Starting a Listener
+
+Example:
 
 ```mqsc
 START LISTENER(LISTENER.TCP)
 ```
 
----
-
-## Display Listener Status
+Verify:
 
 ```mqsc
 DISPLAY LSSTATUS(*)
 ```
+
+Expected Output:
+
+```text
+STATUS(RUNNING)
+```
+
+---
+
+## Stopping a Listener
+
+Example:
+
+```mqsc
+STOP LISTENER(LISTENER.TCP)
+```
+
+Verify:
+
+```mqsc
+DISPLAY LSSTATUS(*)
+```
+
+Expected:
+
+```text
+STATUS(STOPPED)
+```
+
+---
+
+## Listener Status Monitoring
+
+Display all Listeners:
+
+```mqsc
+DISPLAY LISTENER(*)
+```
+
+Display Listener Status:
+
+```mqsc
+DISPLAY LSSTATUS(*)
+```
+
+Important attributes:
+
+* STATUS
+* PORT
+* PID
+* STARTDATE
+* STARTTIME
+
+---
+
+## Verifying Network Connectivity
+
+Administrators should validate Listener availability.
+
+Linux:
+
+```bash
+netstat -an | grep 1414
+```
+
+or
+
+```bash
+ss -an | grep 1414
+```
+
+Expected:
+
+```text
+LISTEN
+```
+
+---
+
+## Multiple Listeners
+
+A Queue Manager may support multiple Listeners.
+
+Example:
+
+```text
+1414
+1415
+1416
+```
+
+Typical use cases:
+
+* Environment Segregation
+* Security Requirements
+* Migration Projects
+
+---
+
+## Common Listener Problems
+
+### MQRC 2059
+
+```text
+MQRC_Q_MGR_NOT_AVAILABLE
+```
+
+Potential causes:
+
+* Queue Manager stopped
+* Listener stopped
+* Wrong hostname
+* Wrong port
+
+---
+
+### Connection Refused
+
+Potential causes:
+
+* Listener not running
+* Firewall blocking traffic
+* Incorrect port configuration
+
+---
+
+### Port Already In Use
+
+Error occurs when another process already uses the configured port.
+
+Verify:
+
+```bash
+netstat -tulpn
+```
+
+or
+
+```bash
+ss -tulpn
+```
+
+---
+
+## Firewall Considerations
+
+Administrators should verify:
+
+* Firewall Rules
+* Security Groups
+* Network ACLs
+* Load Balancers
+
+Common port:
+
+```text
+1414
+```
+
+---
+
+## Listener Administration Best Practices
+
+### Use CONTROL(QMGR)
+
+Allows automatic startup.
+
+---
+
+### Monitor Listener Availability
+
+Include Listener checks in monitoring platforms.
+
+---
+
+### Document Port Usage
+
+Maintain inventory of:
+
+* Queue Managers
+* Ports
+* Firewalls
+* Dependencies
+
+---
+
+### Verify Connectivity Regularly
+
+Perform periodic connectivity testing.
+
+---
+
+## Chapter Summary
+
+You learned:
+
+* Listener Architecture
+* Listener Configuration
+* Listener Monitoring
+* TCP/IP Connectivity
+* Common Listener Failures
+* Firewall Considerations
+* Administrative Best Practices
+
+Listeners are a critical component of IBM MQ communication and often represent the first area administrators investigate during connectivity incidents.
 
 ---
 
