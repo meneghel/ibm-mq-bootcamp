@@ -1,12 +1,14 @@
 # IBM MQ Bootcamp - Module 01
 
-## IBM MQ Fundamentals
+# IBM MQ Fundamentals
 
-### Module Description
+## Module Description
 
-This module introduces the foundations of enterprise messaging and IBM MQ. It explains why messaging remains relevant in modern enterprise architectures, how IBM MQ supports mission-critical integration, and which core components are required to build a basic messaging flow.
+This module introduces the foundations of enterprise messaging and IBM MQ.
 
-The module is designed for students who are starting with IBM MQ or professionals who need to revisit the fundamentals before moving into administration, security, troubleshooting and modernization topics.
+Students will learn how enterprise integration evolved over time, why messaging platforms exist, how IBM MQ provides reliable communication between systems and how modern architectures continue to depend on messaging technologies.
+
+The module establishes the conceptual foundation required for administration, security, troubleshooting, high availability, cloud-native deployments and modernization topics covered later in the bootcamp.
 
 ---
 
@@ -14,24 +16,36 @@ The module is designed for students who are starting with IBM MQ or professional
 
 At the end of this module, students will be able to:
 
-- Understand the role of IBM MQ in enterprise architectures
-- Explain messaging concepts and patterns
-- Identify core IBM MQ components
-- Create and manage basic MQ objects
-- Understand message flow between applications
-- Deploy and test a simple IBM MQ environment
+* Understand the evolution of enterprise integration
+* Explain why messaging platforms exist
+* Understand IBM MQ architecture fundamentals
+* Explain enterprise messaging patterns
+* Understand message delivery guarantees
+* Compare IBM MQ with REST and Kafka
+* Identify IBM MQ objects and their responsibilities
+* Understand MQ message metadata concepts
+* Understand IBM MQ's role in modern integration architectures
 
 ---
 
-## Chapter 01 - Enterprise Messaging Fundamentals
+# Chapter 01 - Enterprise Messaging Fundamentals
 
-### Why Messaging Matters
+## Why Messaging Matters
 
 Enterprise systems rarely operate in isolation.
 
 Applications must exchange information reliably, securely and asynchronously while remaining resilient to failures, maintenance windows, traffic peaks and outages.
 
-In many organizations, a single business process may involve multiple platforms, such as mobile applications, core banking systems, ERP platforms, CRM systems, mainframes, databases, APIs and cloud services.
+In many organizations, a single business process may involve multiple platforms, such as:
+
+* Mobile Applications
+* Core Banking Systems
+* ERP Platforms
+* CRM Systems
+* Mainframes
+* Databases
+* APIs
+* Cloud Services
 
 If every system communicates directly with every other system, the architecture becomes difficult to operate, maintain and evolve.
 
@@ -41,12 +55,12 @@ Messaging helps solve this problem by introducing an intermediary layer responsi
 
 Modern enterprises often face several integration challenges:
 
-- Applications are built using different technologies
-- Systems have different availability windows
-- Some applications process data faster than others
-- Legacy platforms must coexist with modern applications
-- Business processes require reliable communication
-- Failures must not stop the entire ecosystem
+* Applications are built using different technologies
+* Systems have different availability windows
+* Some applications process data faster than others
+* Legacy platforms must coexist with modern applications
+* Business processes require reliable communication
+* Failures must not stop the entire ecosystem
 
 Messaging provides a controlled and resilient way to connect these systems.
 
@@ -82,119 +96,188 @@ Applications do not need to know implementation details about each other.
 
 Maintenance, deployments and temporary outages can be handled with less impact on the overall integration flow.
 
-### Real-World Example
+---
 
-Consider a financial transaction initiated by a mobile application.
+# Chapter 02 - Evolution of Enterprise Integration
 
-A single transaction may involve:
+Enterprise integration has evolved significantly over the last decades.
 
-- Mobile banking application
-- Authentication service
-- Core banking platform
-- Fraud analysis system
-- Notification service
-- Audit system
+## Batch Processing Era
 
-Messaging allows these systems to exchange information reliably while keeping each platform independent.
+Organizations initially exchanged information using files processed in batches.
+
+Characteristics:
+
+* Delayed processing
+* Limited visibility
+* Operational complexity
+
+## File Transfer Era
+
+Applications exchanged files directly.
+
+Challenges:
+
+* Scheduling dependencies
+* Synchronization issues
+* Recovery complexity
+
+## RPC Era
+
+Remote Procedure Calls enabled synchronous communication.
+
+Benefits:
+
+* Fast interactions
+
+Limitations:
+
+* Tight coupling
+* Availability dependency
+
+## SOA Era
+
+Service-Oriented Architecture introduced reusable services.
+
+Examples:
+
+* SOAP
+* ESB
+* Web Services
+
+Benefits:
+
+* Standardization
+* Reusability
+
+Challenges:
+
+* Complexity
+* Runtime dependencies
+
+## Messaging Era
+
+Messaging platforms introduced asynchronous communication.
+
+Examples:
+
+* IBM MQ
+* JMS
+
+Benefits:
+
+* Reliability
+* Decoupling
+* Scalability
+
+## Event-Driven Era
+
+Modern architectures increasingly leverage event-driven communication.
+
+Examples:
+
+* Kafka
+* IBM Event Streams
+
+Benefits:
+
+* Real-time processing
+* Event distribution
 
 ---
 
-## Chapter 02 - IBM MQ Architecture Overview
+# Chapter 03 - Why IBM MQ Exists
+
+Applications fail.
+
+Networks fail.
+
+Servers fail.
+
+Business processes cannot stop.
+
+IBM MQ was designed to provide:
+
+* Reliable delivery
+* Store-and-forward messaging
+* Transactional integrity
+* Platform independence
+* Enterprise-grade resilience
+
+IBM MQ ensures that messages remain protected even when applications become temporarily unavailable.
+
+---
+
+# Chapter 04 - IBM MQ Architecture Overview
 
 IBM MQ is an enterprise messaging platform designed to provide reliable, secure and asynchronous communication between applications, systems and platforms.
 
 IBM MQ can be used in distributed systems, mainframe environments, containerized platforms and hybrid cloud architectures.
 
-### Core Components
+## Core Components
 
-#### Queue Manager
+### Queue Manager
 
-The Queue Manager is the central runtime component of IBM MQ.
+The central runtime component of IBM MQ.
 
-It manages queues, channels, listeners, messages and runtime configuration.
+Responsibilities:
 
-Applications connect to a Queue Manager to put or get messages.
+* Message storage
+* Message routing
+* Security
+* Logging
+* Recovery
+* Administration
 
-A Queue Manager is responsible for storing messages, routing them when required and ensuring messaging operations are handled according to configuration.
+### Queue
 
-#### Queue
+Logical destination where messages are stored until consumed.
 
-A queue is a logical destination where messages are stored until they are consumed.
+### Message
 
-Applications can put messages to a queue or get messages from a queue.
+Unit of data exchanged between applications.
 
-Queues are fundamental to point-to-point messaging.
+Contains:
 
-#### Message
+* Message Data
+* Message Metadata
 
-A message is the unit of data exchanged between applications.
+### Channel
 
-A message usually contains two parts:
+Communication path used by IBM MQ.
 
-- Message data
-- Message metadata
+### Listener
 
-The data contains the business payload. The metadata contains information used by IBM MQ and applications to handle the message.
-
-#### Channel
-
-A channel is a communication path used by IBM MQ.
-
-Channels can be used for application connectivity or communication between Queue Managers.
-
-#### Listener
-
-A listener waits for inbound network connections to a Queue Manager.
-
-It allows client applications or other MQ components to connect using a configured port.
-
-### Basic Architecture
-
-A simple IBM MQ architecture includes:
-
-1. One Queue Manager
-2. One Local Queue
-3. One producer application
-4. One consumer application
-
-The producer puts a message into the queue. The consumer gets the message from the queue.
+Accepts inbound network connections.
 
 ---
 
-## Chapter 03 - Messaging Patterns
+# Chapter 05 - Messaging Patterns
 
-Messaging patterns describe how applications exchange messages.
-
-### Point-to-Point
-
-In point-to-point messaging, one application sends a message to a queue and one consumer receives it.
-
-Example:
+## Point-to-Point
 
 ```text
 Producer -> Queue -> Consumer
 ```
 
-This is one of the most common messaging patterns.
+One producer.
 
-### Request/Reply
+One consumer.
 
-In request/reply messaging, one application sends a request message and expects a response message.
+---
 
-Example:
+## Request/Reply
 
 ```text
 Application A -> Request Queue -> Application B
 Application B -> Reply Queue -> Application A
 ```
 
-This pattern is useful when one system needs a result or confirmation from another system.
+Used when a response is required.
 
-### Publish/Subscribe
+---
 
-In publish/subscribe messaging, a publisher sends a message to a topic and multiple subscribers can receive messages from that topic.
-
-Example:
+## Publish/Subscribe
 
 ```text
 Publisher -> Topic -> Subscriber A
@@ -202,47 +285,106 @@ Publisher -> Topic -> Subscriber A
                   -> Subscriber C
 ```
 
-This pattern is useful when multiple systems need to react to the same event.
+Used when multiple systems consume the same event.
 
 ---
 
-## Chapter 04 - IBM MQ Objects
+# Chapter 06 - Message Delivery Guarantees
 
-IBM MQ uses objects to represent runtime resources.
+## At Most Once
 
-### Local Queue
+Messages may be lost.
 
-A local queue stores messages on the Queue Manager where it is defined.
-
-Applications can put messages to and get messages from local queues.
-
-### Remote Queue
-
-A remote queue represents a queue that exists on another Queue Manager.
-
-It is used when messages need to be routed to a remote destination.
-
-### Alias Queue
-
-An alias queue provides an alternative name for another queue or topic.
-
-It is useful for abstraction, naming standards and application decoupling.
-
-### Transmission Queue
-
-A transmission queue stores messages that are waiting to be sent to another Queue Manager.
-
-It is used in distributed messaging scenarios.
+Duplicates are avoided.
 
 ---
 
-## Chapter 05 - Message Flow
+## At Least Once
 
-A basic message flow has three main steps:
+Messages are delivered.
 
-1. A producer creates a message
-2. The producer puts the message into a queue
-3. A consumer gets the message from the queue
+Duplicates may occur.
+
+---
+
+## Exactly Once
+
+Messages are delivered exactly once.
+
+No loss.
+
+No duplicates.
+
+This is one of IBM MQ's strongest differentiators in mission-critical environments.
+
+---
+
+# Chapter 07 - IBM MQ vs REST vs Kafka
+
+| Capability | REST | Kafka | IBM MQ |
+|-----------|--------|---------|---------|
+| Synchronous Communication | Yes | No | Optional |
+| Guaranteed Delivery | Limited | Partial | Strong |
+| Transactions | Limited | Limited | Strong |
+| Event Streaming | Poor | Excellent | Good |
+| Banking Workloads | Moderate | Moderate | Excellent |
+| Legacy Integration | Poor | Moderate | Excellent |
+| Mission-Critical Processing | Moderate | Good | Excellent |
+
+---
+
+# Chapter 08 - IBM MQ Objects
+
+## Local Queue
+
+Stores messages on the local Queue Manager.
+
+## Remote Queue
+
+Represents a queue hosted on another Queue Manager.
+
+## Alias Queue
+
+Alternative name for another queue.
+
+## Transmission Queue
+
+Stores messages awaiting delivery to another Queue Manager.
+
+## Dead Letter Queue
+
+Stores messages that cannot be delivered.
+
+---
+
+# Chapter 09 - Introduction to MQMD
+
+Every IBM MQ message contains metadata.
+
+The MQ Message Descriptor (MQMD) provides information used by IBM MQ and applications.
+
+Common fields include:
+
+* Message ID
+* Correlation ID
+* Priority
+* Persistence
+* Format
+* Timestamp
+
+MQMD enables message tracking, correlation and routing across distributed systems.
+
+---
+
+# Chapter 10 - Message Flow
+
+A basic message flow consists of:
+
+1. Producer creates message
+2. Producer performs PUT
+3. Queue Manager stores message
+4. Consumer performs GET
+5. Message is removed from queue
 
 Example:
 
@@ -250,28 +392,46 @@ Example:
 Application A -> IBM MQ Queue -> Application B
 ```
 
-This model allows Application A and Application B to remain independent.
-
-Application A does not need to know whether Application B is available at the exact same moment.
+Applications remain independent and loosely coupled.
 
 ---
 
-## Chapter 06 - Module Summary
+# Chapter 11 - IBM MQ in Modern Architectures
+
+IBM MQ continues to play a strategic role in modern integration architectures.
+
+Common integrations include:
+
+* IBM App Connect Enterprise
+* IBM API Connect
+* IBM Event Streams
+* IBM Cloud Pak for Integration
+* OpenShift
+* Kubernetes
+
+IBM MQ remains a critical component for organizations requiring guaranteed delivery and enterprise-grade reliability.
+
+---
+
+# Chapter 12 - Module Summary
 
 In this module, you learned:
 
-- Why messaging matters in enterprise architectures
-- How messaging supports reliability and resilience
-- What IBM MQ is used for
-- The role of Queue Managers, Queues, Messages, Channels and Listeners
-- The difference between point-to-point, request/reply and publish/subscribe patterns
-- The purpose of basic IBM MQ objects
+* Why messaging matters
+* How enterprise integration evolved
+* Why IBM MQ exists
+* IBM MQ architecture fundamentals
+* Enterprise messaging patterns
+* Delivery guarantees
+* IBM MQ object model
+* MQMD fundamentals
+* IBM MQ positioning in modern architectures
 
-You are now ready to execute the first hands-on lab and create a simple IBM MQ environment.
+You are now ready to execute the first hands-on lab and create your first IBM MQ environment.
 
 ---
 
-## Next Step
+# Next Step
 
 Proceed to:
 
