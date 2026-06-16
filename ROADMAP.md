@@ -20,8 +20,6 @@ Status: Released
 
 ---
 
-## Planned
-
 ### v1.2.0
 
 Module 02 Complete
@@ -35,6 +33,8 @@ Includes:
 * Labs
 
 ---
+
+## Planned
 
 ### v1.3.0
 
