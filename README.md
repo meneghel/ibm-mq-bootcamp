@@ -42,24 +42,25 @@ Designed for production environments.
 
 | Module                                    | Status         |
 | ----------------------------------------- | -------------- |
-| Module 01 - Fundamentals                  | ✅ Complete     |
-| Module 02 - Administration & Operations   | 🚧 In Progress |
-| Module 03 - Security                      | ⏳ Planned      |
-| Module 04 - Clustering                    | ⏳ Planned      |
-| Module 05 - High Availability             | ⏳ Planned      |
-| Module 06 - Disaster Recovery             | ⏳ Planned      |
-| Module 07 - Performance & Troubleshooting | ⏳ Planned      |
-| Module 08 - Cloud Native MQ               | ⏳ Planned      |
-| Module 09 - Modernization Patterns        | ⏳ Planned      |
+| Module 01 - Fundamentals                  | ✅ Complete   |
+| Module 02 - Administration & Operations   | ✅ Complete   |
+| Module 03 - Security                      | ⏳ Planned    |
+| Module 04 - Clustering                    | ⏳ Planned    |
+| Module 05 - High Availability             | ⏳ Planned    |
+| Module 06 - Disaster Recovery             | ⏳ Planned    |
+| Module 07 - Performance & Troubleshooting | ⏳ Planned    |
+| Module 08 - Cloud Native MQ               | ⏳ Planned    |
+| Module 09 - Modernization Patterns        | ⏳ Planned    |
 
 ---
 
 ## Releases
 
-| Version | Description                      |
-| ------- | -------------------------------- |
-| v1.0.0  | Module 01 Fundamentals Complete  |
-| v1.1.0  | Module 02 Student Guide Complete |
+| Version | Description                                              |
+| ------- | -------------------------------------------------------- |
+| v1.0.0  | Module 01 Fundamentals Complete                          |
+| v1.1.0  | Module 02 Student Guide Complete                         |
+| v1.2.0  | Module 02 Module 02 Administration & Operations Complete |
 
 ---
 
