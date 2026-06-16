@@ -71,20 +71,61 @@ Each environment should be managed independently following change control proced
 
 ## What Is a Queue Manager?
 
-A Queue Manager is the central runtime component of IBM MQ.
+The Queue Manager is the central runtime component of IBM MQ.
 
-It is responsible for:
+Every IBM MQ environment is built around one or more Queue Managers.
 
-* Managing Queues
-* Managing Channels
-* Storing Messages
-* Processing Transactions
-* Maintaining Logs
-* Recovery Operations
+A Queue Manager is responsible for:
+
+* Message Storage
+* Queue Management
+* Channel Management
+* Logging
+* Recovery
+* Security Enforcement
+* Transaction Coordination
+
+Without a running Queue Manager, applications cannot exchange messages.
+
+---
+
+## Queue Manager Architecture
+
+A Queue Manager consists of several internal components working together.
+
+Typical components include:
+
+* Object Definitions
+* Message Storage
+* Active Logs
+* Archive Logs
+* Recovery Information
+* Channel Processes
+* Listener Processes
+
+Typical location:
+
+```text
+/var/mqm/qmgrs/QM1
+```
+
+Important subdirectories:
+
+```text
+errors/
+active/
+qm.ini
+queues/
+ssl/
+```
+
+Understanding the Queue Manager directory structure is essential for backup, troubleshooting and recovery activities.
 
 ---
 
 ## Creating a Queue Manager
+
+Queue Managers are created using the crtmqm command.
 
 Example:
 
@@ -92,43 +133,248 @@ Example:
 crtmqm QM1
 ```
 
-This command creates a new Queue Manager named QM1.
+Example Output:
+
+```text
+WebSphere MQ queue manager created.
+Directory '/var/mqm/qmgrs/QM1' created.
+The queue manager is associated with installation 'Installation1'.
+```
+
+At this stage the Queue Manager exists but is not yet running.
 
 ---
 
 ## Starting a Queue Manager
 
+Start the Queue Manager:
+
 ```bash
 strmqm QM1
 ```
 
----
+Expected Result:
 
-## Stopping a Queue Manager
-
-```bash
-endmqm QM1
+```text
+IBM MQ queue manager 'QM1' starting.
+IBM MQ queue manager 'QM1' started.
 ```
 
-For immediate shutdown:
-
-```bash
-endmqm -i QM1
-```
-
----
-
-## Displaying Queue Manager Status
+Verify status:
 
 ```bash
 dspmq
 ```
 
-Example Output:
+Output:
 
 ```text
 QMNAME(QM1) STATUS(Running)
 ```
+
+---
+
+## Queue Manager States
+
+Administrators must understand Queue Manager states.
+
+Common states include:
+
+### Running
+
+Queue Manager is operational.
+
+```text
+STATUS(Running)
+```
+
+Applications may connect and process messages.
+
+---
+
+### Ended Normally
+
+Queue Manager stopped successfully.
+
+```text
+STATUS(Ended normally)
+```
+
+No recovery required.
+
+---
+
+### Starting
+
+Queue Manager startup in progress.
+
+```text
+STATUS(Starting)
+```
+
+---
+
+### Running Elsewhere
+
+Typically seen in HA environments.
+
+```text
+STATUS(Running elsewhere)
+```
+
+The Queue Manager is active on another node.
+
+---
+
+## Stopping a Queue Manager
+
+### Normal Shutdown
+
+Recommended method.
+
+```bash
+endmqm QM1
+```
+
+Behavior:
+
+* Waits for applications
+* Completes transactions
+* Shuts down cleanly
+
+---
+
+### Immediate Shutdown
+
+```bash
+endmqm -i QM1
+```
+
+Behavior:
+
+* Terminates active applications
+* Rolls back uncommitted work
+* Faster shutdown
+
+Used during operational emergencies.
+
+---
+
+### Preemptive Shutdown
+
+```bash
+endmqm -p QM1
+```
+
+Behavior:
+
+* Forcefully terminates Queue Manager processes
+
+Use only when normal methods fail.
+
+---
+
+## Logging and Recovery
+
+IBM MQ maintains transaction logs.
+
+Purpose:
+
+* Recover persistent messages
+* Recover Queue Manager state
+* Ensure transactional consistency
+
+Log types:
+
+### Active Logs
+
+Used during normal processing.
+
+### Archive Logs
+
+Retained for long-term recovery.
+
+---
+
+## Crash Recovery
+
+If a server crashes unexpectedly:
+
+```text
+Power Failure
+Operating System Crash
+Hardware Failure
+```
+
+IBM MQ automatically performs recovery during startup.
+
+Recovery uses transaction logs to restore a consistent state.
+
+This is one of the key reasons IBM MQ is trusted for mission-critical workloads.
+
+---
+
+## Administrative Best Practices
+
+### Use Consistent Naming
+
+Example:
+
+```text
+QM.DEV
+QM.TEST
+QM.PROD
+```
+
+---
+
+### Separate Environments
+
+Never share Queue Managers between:
+
+* Development
+* Testing
+* Production
+
+---
+
+### Monitor Startup and Shutdown Events
+
+Administrators should always review:
+
+```text
+/var/mqm/errors
+```
+
+after unexpected outages.
+
+---
+
+### Document Queue Managers
+
+Maintain documentation for:
+
+* Purpose
+* Owner
+* Environment
+* Recovery Procedures
+* Dependencies
+
+---
+
+## Chapter Summary
+
+You learned:
+
+* Queue Manager architecture
+* Queue Manager lifecycle
+* Startup and shutdown procedures
+* Queue Manager states
+* Logging concepts
+* Recovery fundamentals
+* Administrative best practices
+
+The Queue Manager is the foundation of every IBM MQ environment and one of the most important components an administrator must understand.
 
 ---
 
