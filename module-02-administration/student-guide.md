@@ -2360,33 +2360,402 @@ Monitoring is one of the most valuable operational disciplines within IBM MQ adm
 
 # Chapter 09 - Backup and Configuration Management
 
-## Backup Objectives
+## Introduction
 
-Protect:
+IBM MQ environments support mission-critical business processes.
+
+Because of this, administrators must implement proper backup, recovery and configuration management procedures.
+
+The goal is not only to recover from failures, but also to ensure configuration consistency, operational stability and business continuity.
+
+A successful backup strategy should protect:
 
 * Queue Manager Configuration
-* MQSC Definitions
-* Operational Procedures
+* MQ Objects
+* Scripts
+* Certificates
+* Operational Documentation
+* Recovery Procedures
 
 ---
 
-## Export MQSC Definitions
+## Why Backup Matters
+
+Failures can occur at any time.
+
+Examples include:
+
+* Hardware Failures
+* Operating System Corruption
+* Human Error
+* Storage Failures
+* Site Outages
+* Security Incidents
+
+Without proper backups, recovery can become extremely difficult and time consuming.
+
+---
+
+## Backup Categories
+
+IBM MQ environments typically require multiple backup types.
+
+### Configuration Backup
+
+Protects:
+
+* Queue Definitions
+* Channel Definitions
+* Listener Definitions
+* Process Definitions
+* Service Objects
+
+---
+
+### Queue Manager Backup
+
+Protects:
+
+* Queue Manager Files
+* Logs
+* Configuration Files
+
+---
+
+### Operating System Backup
+
+Protects:
+
+* MQ Installation
+* Scripts
+* Automation Components
+* SSL Artifacts
+
+---
+
+## Queue Manager Directory Structure
+
+Typical location:
+
+```text id="g9c1yq"
+/var/mqm/qmgrs/QM1
+```
+
+Important directories:
+
+```text id="tfh8w9"
+errors/
+ssl/
+qm.ini
+```
+
+These directories should be included in backup procedures.
+
+---
+
+## Exporting MQ Configuration
+
+Configuration exports are essential for backup and migration activities.
+
+---
+
+### saveqmgr
+
+The saveqmgr utility exports MQ object definitions.
 
 Example:
 
-```bash
-runmqsc QM1 < backup.mqsc
+```bash id="f5j4ko"
+saveqmgr -m QM1
+```
+
+Example Output:
+
+```text id="h7l4sz"
+DEFINE QLOCAL(...)
+DEFINE CHANNEL(...)
+DEFINE LISTENER(...)
+```
+
+Benefits:
+
+* Object Backup
+* Migration Support
+* Documentation
+
+---
+
+### dmpmqcfg
+
+The dmpmqcfg utility exports MQ configuration in MQSC format.
+
+Example:
+
+```bash id="up7i1v"
+dmpmqcfg -m QM1
+```
+
+Export to file:
+
+```bash id="5txv9y"
+dmpmqcfg -m QM1 > QM1-backup.mqsc
+```
+
+Benefits:
+
+* Disaster Recovery
+* Environment Replication
+* Version Control
+
+---
+
+## Configuration Management
+
+MQSC scripts should be treated as source code.
+
+Recommended approach:
+
+```text id="hhl44u"
+Git Repository
+      |
+ MQSC Scripts
+      |
+ Pull Requests
+      |
+ Change Approval
+      |
+ Deployment
+```
+
+Benefits:
+
+* Auditability
+* Traceability
+* Repeatability
+
+---
+
+## Version Control
+
+Store:
+
+* Queue Definitions
+* Channel Definitions
+* Listener Definitions
+* Security Configuration
+* Operational Procedures
+
+Example repository:
+
+```text id="zkls7s"
+mq-config/
+├── queues
+├── channels
+├── listeners
+├── security
+└── recovery
 ```
 
 ---
 
-## Change Control
+## SSL Certificate Backup
 
-Best practices:
+Certificates are critical for secure communications.
 
-* Version control MQSC scripts
-* Document changes
-* Use approval workflows
+Backup:
+
+* Key Repositories
+* Certificates
+* Trust Stores
+
+Typical location:
+
+```text id="znzgjf"
+/var/mqm/qmgrs/QM1/ssl
+```
+
+Loss of SSL artifacts may prevent secure channels from operating.
+
+---
+
+## Recovery Concepts
+
+Recovery planning should answer:
+
+### What failed?
+
+Examples:
+
+* Queue Manager
+* Server
+* Storage
+* Site
+
+---
+
+### What must be recovered?
+
+Examples:
+
+* Configuration
+* Messages
+* Security
+* Connectivity
+
+---
+
+### How quickly?
+
+Recovery objectives should be defined in advance.
+
+---
+
+## Recovery Objectives
+
+### RTO
+
+Recovery Time Objective.
+
+Question:
+
+```text id="ujm9hz"
+How long can the business tolerate downtime?
+```
+
+---
+
+### RPO
+
+Recovery Point Objective.
+
+Question:
+
+```text id="pnf3ae"
+How much data loss is acceptable?
+```
+
+---
+
+## Disaster Recovery Considerations
+
+A Disaster Recovery strategy should include:
+
+* Backup Procedures
+* Recovery Procedures
+* Documentation
+* Testing
+* Escalation Paths
+
+Recovery plans should be validated regularly.
+
+---
+
+## Change Management
+
+Changes should never be performed directly in production without proper controls.
+
+Recommended workflow:
+
+```text id="g5lw3h"
+Development
+      |
+Testing
+      |
+Approval
+      |
+Production
+```
+
+---
+
+## Documentation Requirements
+
+Every Queue Manager should have documentation describing:
+
+* Purpose
+* Owners
+* Applications
+* Channels
+* Listeners
+* Dependencies
+* Recovery Procedures
+
+---
+
+## Backup Validation
+
+A backup is only useful if it can be restored.
+
+Administrators should regularly test:
+
+* Configuration Recovery
+* Object Recovery
+* Disaster Recovery Procedures
+
+---
+
+## Administrative Best Practices
+
+### Automate Backups
+
+Avoid manual backup procedures.
+
+---
+
+### Use Version Control
+
+Store configuration as code.
+
+---
+
+### Test Recovery
+
+Validate recovery procedures periodically.
+
+---
+
+### Protect Certificates
+
+Backup SSL repositories securely.
+
+---
+
+### Document Everything
+
+Documentation reduces recovery time and operational risk.
+
+---
+
+## Operational Checklist
+
+Daily or weekly activities:
+
+* Verify Backup Execution
+* Verify Repository Updates
+* Validate Recovery Documentation
+* Review Configuration Changes
+* Verify SSL Artifacts
+* Confirm Recovery Procedures
+
+---
+
+## Chapter Summary
+
+You learned:
+
+* Backup Strategies
+* Configuration Management
+* saveqmgr
+* dmpmqcfg
+* Version Control
+* SSL Backup
+* Recovery Concepts
+* RTO and RPO
+* Disaster Recovery
+* Change Management
+* Operational Best Practices
+
+Backup and configuration management are critical disciplines that ensure IBM MQ environments remain recoverable, auditable and operational during both routine maintenance and unexpected incidents.
 
 ---
 
