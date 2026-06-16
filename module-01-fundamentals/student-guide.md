@@ -396,9 +396,93 @@ Applications remain independent and loosely coupled.
 
 ---
 
-# Chapter 11 - IBM MQ in Modern Architectures
+# Chapter 11 - Persistence and Transactions
+
+One of the primary reasons IBM MQ is widely adopted in mission-critical environments is its support for message persistence and transactional integrity.
+
+## Persistent Messages
+
+Persistent messages are written to disk and protected by IBM MQ recovery mechanisms.
+
+Benefits:
+
+* Survive Queue Manager restarts
+* Survive system failures
+* Support business-critical workloads
+
+Typical use cases:
+
+* Banking transactions
+* Payment processing
+* Insurance claims
+* Order management
+
+## Non-Persistent Messages
+
+Non-persistent messages prioritize performance.
+
+Benefits:
+
+* Lower latency
+* Higher throughput
+
+Typical use cases:
+
+* Monitoring
+* Telemetry
+* Temporary notifications
+
+## Transactions
+
+IBM MQ supports transactional processing through Units of Work (UOW).
+
+A transaction may include:
+
+* Multiple MQPUT operations
+* Multiple MQGET operations
+* Database updates
+
+### Commit
+
+Makes all changes permanent.
+
+```text
+MQPUT
+MQPUT
+COMMIT
+```
+
+### Rollback
+
+Reverts all changes.
+
+```text
+MQPUT
+MQPUT
+ROLLBACK
+```
+
+## Why It Matters
+
+Transactional integrity ensures business consistency.
+
+This capability is one of IBM MQ's key differentiators when compared to many alternative messaging platforms.
+
+---
+
+# Chapter 12 - IBM MQ in Modern Architectures
 
 IBM MQ continues to play a strategic role in modern integration architectures.
+
+Many organizations operate a combination of:
+
+* Legacy Systems
+* APIs
+* Event Platforms
+* Cloud-Native Applications
+* SaaS Solutions
+
+IBM MQ often serves as the reliability layer connecting these environments.
 
 Common integrations include:
 
@@ -409,11 +493,104 @@ Common integrations include:
 * OpenShift
 * Kubernetes
 
+## MQ and APIs
+
+IBM MQ is frequently used behind APIs.
+
+While APIs expose business services externally, MQ provides reliable backend communication.
+
+## MQ and Events
+
+IBM MQ and Kafka are often complementary.
+
+Kafka distributes events at scale.
+
+IBM MQ protects business transactions requiring guaranteed delivery.
+
+## MQ and Hybrid Cloud
+
+Many organizations use IBM MQ to connect:
+
+* On-Premises Systems
+* Private Clouds
+* Public Clouds
+
+This enables modernization without disrupting existing business processes.
+
 IBM MQ remains a critical component for organizations requiring guaranteed delivery and enterprise-grade reliability.
 
 ---
 
-# Chapter 12 - Module Summary
+# Chapter 13 - IBM MQ in the Enterprise
+
+IBM MQ remains one of the most widely adopted enterprise messaging platforms in the world.
+
+For more than three decades, organizations have relied on IBM MQ to process mission-critical transactions where message loss is unacceptable.
+
+## Banking
+
+Common use cases:
+
+* Payments
+* ATM Networks
+* Core Banking
+* Financial Settlement Systems
+
+Millions of financial transactions are processed daily through IBM MQ infrastructures.
+
+## Insurance
+
+Common use cases:
+
+* Claims Processing
+* Policy Administration
+* Fraud Analysis
+* Customer Portals
+
+## Government
+
+Common use cases:
+
+* Citizen Services
+* Tax Platforms
+* Identity Systems
+* Public Sector Integration
+
+## Retail
+
+Common use cases:
+
+* Order Processing
+* Inventory Synchronization
+* Payment Gateways
+* Omnichannel Commerce
+
+## Transportation
+
+Common use cases:
+
+* Reservation Systems
+* Cargo Tracking
+* Logistics Platforms
+* Fleet Operations
+
+## Why Organizations Continue to Use IBM MQ
+
+Organizations continue to invest in IBM MQ because it delivers:
+
+* Reliability
+* Security
+* Transactional Integrity
+* Platform Independence
+* Operational Stability
+
+IBM MQ frequently operates behind the scenes, supporting systems that process millions of business transactions every day.
+
+For many enterprises, IBM MQ remains part of the strategic integration foundation.
+
+---
+
+# Chapter 14 - Module Summary
 
 In this module, you learned:
 
@@ -422,12 +599,16 @@ In this module, you learned:
 * Why IBM MQ exists
 * IBM MQ architecture fundamentals
 * Enterprise messaging patterns
-* Delivery guarantees
+* Message delivery guarantees
 * IBM MQ object model
 * MQMD fundamentals
-* IBM MQ positioning in modern architectures
+* Persistence and transactions
+* IBM MQ in modern architectures
+* IBM MQ positioning within enterprise environments
 
-You are now ready to execute the first hands-on lab and create your first IBM MQ environment.
+You are now prepared to create and administer a basic IBM MQ environment and understand how IBM MQ supports mission-critical workloads.
+
+The next step is to gain hands-on experience through Lab 01 and continue building operational knowledge in Module 02.
 
 ---
 
